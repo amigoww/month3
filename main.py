@@ -1,6 +1,6 @@
 import asyncio
 import random
-from tkinter.font import names
+
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
@@ -23,7 +23,9 @@ async def myinfo_handler(message: types.Message):
     user_id = message.from_user.id
     name = message.from_user.first_name
     user_name = message.from_user.username
-    await message.answer(f"Ваш id: {user_id}, имя: {name}, ник: {user_name}")
+    if message.from_user.username is None:
+        user_name = "Не указан"
+    await message.answer(f"Ваш id: {user_id}\nимя: {name}\nник: {user_name}")
 
 @dp.message(Command("random"))
 async def random_handler(message: types.Message):
