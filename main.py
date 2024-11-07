@@ -1,40 +1,20 @@
 import asyncio
-import random
 
-
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
-from dotenv import dotenv_values
-
-token = dotenv_values(".env").get("BOT_TOKEN")
-bot = Bot(token=token)
-dp = Dispatcher()
-
-names = ["Amir", "Kairat", "Azamat", "Nigina", "Daulet", "Churok"]
-
-@dp.message(Command("start"))
-async def start_handler(message: types.Message):
-    name = message.from_user.first_name
-    msg = f"Привет {name}"
-    await message.answer(msg)
-
-@dp.message(Command("myinfo"))
-async def myinfo_handler(message: types.Message):
-    user_id = message.from_user.id
-    name = message.from_user.first_name
-    user_name = message.from_user.username
-    if message.from_user.username is None:
-        user_name = "Не указан"
-    await message.answer(f"Ваш id: {user_id}\nимя: {name}\nник: {user_name}")
-
-@dp.message(Command("random"))
-async def random_handler(message: types.Message):
-    random_name = random.choice(names)
-    await message.answer(f"Случайное имя: {random_name}")
+import logging
+from bot_config import bot, dp
+from handlers.start import start_router
+from handlers.myinfo import myinfo_router
+from handlers.random import random_router
+from handlers.other_messages import echo_router
 
 
 async def main():
+    dp.include_router(start_router)
+    dp.include_router(myinfo_router)
+    dp.include_router(random_router)
+    dp.include_router(echo_router)
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
