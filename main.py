@@ -12,8 +12,9 @@ async def main():
     dp.include_router(start_router)
     dp.include_router(myinfo_router)
     dp.include_router(random_router)
-    dp.include_router(echo_router)
     dp.include_router(review_router)
+    dp.include_router(echo_router)
+
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
