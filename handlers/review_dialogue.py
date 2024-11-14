@@ -36,27 +36,34 @@ async def process_phone_number(message: types.Message, state: FSMContext):
 @review_router.message(RestourantReview.visit_date)
 async def process_food_rating(message: types.Message, state: FSMContext):
     await state.set_state(RestourantReview.food_rating)
-    await message.answer("Как оцениваете качество еды\n"
-                         "плохо\n"
-                         "хорошо\n"
-                         "отлично")
+
+    kb = types.ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                types.KeyboardButton(text="плохо"),
+                types.KeyboardButton(text="хорошо"),
+                types.KeyboardButton(text="отлично")
+            ]
+        ]
+    )
+    await message.answer("Как оцениваете качество еды", reply_markup=kb)
+
     await state.update_data(visit_date=message.text)
 
 
 @review_router.message(RestourantReview.food_rating)
 async def process_cleanliness_rating(message: types.Message, state: FSMContext):
     await state.set_state(RestourantReview.cleanliness_rating)
-    await message.answer("Как оцениваете чистоту заведенияе\n"
-                         "плохо\n"
-                         "хорошо\n"
-                         "отлично")
+    await message.answer("Как оцениваете чистоту заведения")
+
     await state.update_data(food_rating=message.text)
 
 
 @review_router.message(RestourantReview.cleanliness_rating)
 async def process_extra_comments(message: types.Message, state: FSMContext):
+    kb = types.ReplyKeyboardRemove()
     await state.set_state(RestourantReview.extra_comments)
-    await message.answer("Дополнительные коментарии/Жалобы")
+    await message.answer("Дополнительные коментарии/Жалобы", reply_markup=kb)
     await state.update_data(cleanliness_rating=message.text)
 
 
