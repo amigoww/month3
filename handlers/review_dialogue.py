@@ -1,8 +1,7 @@
-
 from aiogram import Router, F, types
-from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.state import State, StatesGroup, default_state
 from aiogram.fsm.context import FSMContext
-
+from bot_config import database
 
 review_router = Router()
 
@@ -89,4 +88,16 @@ async def process_extra_comments(message: types.Message, state: FSMContext):
     await state.update_data(extra_comments=message.text)
     data = await state.get_data()
     print(data)
+
+    database.execute(
+        query="""
+            INSERT INTO reviews (name, phone_number, visit_date, 
+            food_rating, cleanliness_rating, extra_comments )
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+        params=(data["name"], data["phone_number"], data["visit_date"],
+                data["food_rating"], data["cleanliness_rating"], data["extra_comments"]),
+    )
+
+
     await state.clear()
